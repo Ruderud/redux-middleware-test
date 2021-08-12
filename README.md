@@ -20,3 +20,25 @@
 
 Redux, react-redux를 사용함
 
+
+
+
+
+## 미들웨어 구조
+
+```jsx
+const middleware = store => next => action => {
+	//실제 수행작업
+}
+
+const middleware(store) {
+	return function(next) {
+		return function(action) {
+			//실제 수행작업
+		}
+	}
+}
+```
+
+![image-20210812144607450](/Users/jeong-gyeonghun/Library/Application Support/typora-user-images/image-20210812144607450.png)
+
