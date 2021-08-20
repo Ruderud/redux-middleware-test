@@ -1,6 +1,7 @@
 import * as postsAPI from "../api/posts";
 import {
   createPromiseThunk,
+  createPromiseThunkById,
   handleAsyncActions,
   reducerUtils,
 } from "../lib/asyncUtils";
@@ -20,21 +21,7 @@ const GET_POST_ERROR = "posts/GET_POST_ERROR";
 const CLEAR_POST = "CLEAR_POST";
 
 export const getPosts = createPromiseThunk(GET_POSTS, postsAPI.getPosts);
-export const getPost = (id) => async (dispatch) => {
-  //meta값을 id에 전달하면, reducer에서 그 id를 참조하여 상태업데이트
-  dispatch({ type: GET_POST, meta: id });
-  try {
-    const payload = await postsAPI.getPostById(id);
-    dispatch({ type: GET_POST_SUCCESS, payload, meta: id });
-  } catch (e) {
-    dispatch({
-      type: GET_POST_ERROR,
-      payload: e,
-      error: true,
-      meta: id,
-    });
-  }
-};
+export const getPost = createPromiseThunkById(GET_POST, postsAPI.getPostById);
 
 export const clearPost = () => ({ type: CLEAR_POST });
 
