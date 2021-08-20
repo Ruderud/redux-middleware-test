@@ -92,6 +92,44 @@ export const handleAsyncActions = (type, key, keepData) => {
   };
 };
 
+export const handleAsyncActionsById = (type, key, keepData) => {
+  const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+  return (state, action) => {
+    const id = action.meta;
+    switch (action.type) {
+      case type:
+        return {
+          ...state,
+          //keepData값을 통해서, 이전의 데이터 값이 있을경우에는 그 키값에 해당하는 데이터를 불러오고, 그렇지 않을경우에는 null을 반환
+          [key]: {
+            ...state[key],
+            [id]: reducerUtils.loading(
+              keepData ? state[key][id] && state[key][id].data : null
+            ),
+          },
+        };
+      case SUCCESS:
+        return {
+          ...state,
+          [key]: {
+            ...state[key],
+            [id]: reducerUtils.success(action.payload),
+          },
+        };
+      case ERROR:
+        return {
+          ...state,
+          [key]: {
+            ...state[key],
+            [id]: reducerUtils.error(action.payload),
+          },
+        };
+      default:
+        return state;
+    }
+  };
+};
+
 export const reducerUtils = {
   // initial data값의 반복을 이렇게 일반화 시켜서 반환
   initial: (data = null) => ({

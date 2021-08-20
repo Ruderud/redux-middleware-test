@@ -3,6 +3,7 @@ import {
   createPromiseThunk,
   createPromiseThunkById,
   handleAsyncActions,
+  handleAsyncActionsById,
   reducerUtils,
 } from "../lib/asyncUtils";
 
@@ -31,39 +32,9 @@ const initialState = {
 };
 
 const getPostsReducer = handleAsyncActions(GET_POSTS, "posts", true);
-const getPostReducer = (state, action) => {
-  const id = action.meta;
-  switch (action.type) {
-    case GET_POST:
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          //이렇게 작성해준 이유는 초기 initialState.post는 빈객체 == undefined이기 때문에 바로 loading으로 전달하면 오류가 발생함
-          //그렇기 때문에 and 연산자를 통해서 객체값이 있는 경우에만 loading에 전달하게끔 만들었음 => 로딩중에도 기존 데이터를 초기화 하지 않겠다는 의미
-          [id]: reducerUtils.loading(state.post[id] && state.post[id].data),
-        },
-      };
-    case GET_POST_SUCCESS:
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          [id]: reducerUtils.success(action.payload),
-        },
-      };
-    case GET_POST_ERROR:
-      return {
-        ...state,
-        post: {
-          ...state.post,
-          [id]: reducerUtils.error(action.payload),
-        },
-      };
-    default:
-      return state;
-  }
-};
+const getPostReducer = handleAsyncActionsById(GET_POST, "post", true);
+// true는 keepdata를 의미 => true일시 로딩중에도 데이터를 초기화 x, 데이터 재사용
+
 export default function posts(state = initialState, action) {
   switch (action.type) {
     case GET_POSTS:
