@@ -24,7 +24,7 @@ Redux, react-redux를 사용함
 
 
 
-## 미들웨어 구조&기능
+## 미들웨어 구조& Redux thunk
 
 ```jsx
 const middleware = store => next => action => {
@@ -152,3 +152,73 @@ $ npx json-server ./data.json --port 4000
 이런식으로 json-server "DB위치" "포트지정" 하여 열면 가상 백엔드 서버가 열린다
 
 닫을때는 ctrl+c
+
+<hr>
+
+CORS & Proxy
+
+원래는 axis.get으로 jsonserver에 요청시, CORS정책에 의해 못쓰는것이 정상이지만,
+
+Json-server는 자동으로 Access-Control-Allow-Origin: *처리를 해놔서 모든 요청에 대해 허용되어있음.
+
+
+
+## Redux saga
+
+액션을 모니터링하고있다가 특정 액션이 되면 특정 작업(상태조회, 스크립트실행, api요청)을 실행함
+
+비동기작업중 기존 요청 취소가능
+
+특정 액션 발생시 다른액션 디스패치 또는 스크립트 실행가능
+
+자바스크립트의 Generator라는 문법을 사용함
+
+<hr>
+
+Generator는 함수의 흐름을 특정 구간에 멈춰 놓앆다가 다시 실행할 수 있다.
+
+또한 결과값을 여러번 내보낼 수 있다.
+
+```js
+function* generatorFn() {
+	console.log("하이용");
+	yield 1; // 함수의 흐름을 멈춰놨다가 1이라는 값을 반환할 수 있음 (return과는 조금 다름)
+	console.log("하이하이용");
+	yield 2;
+	console.log("function*");
+	yield 3;
+	return 4;
+}
+const generator = generatorFn() //제너레이터
+//시행시 상태가 <suspended>가 되는데, 이는 제너레이터 함수가 멈춰있다는 의미 => 즉 초기 호출시에는 멈춰있는상태
+generator.next() //제너레이터 실행 => {value:1, done: false}
+generator.next() //제너레이터 실행 => {value:2, done: false}
+generator.next() //제너레이터 실행 => {value:3, done: false}
+generator.next() //제너레이터 실행 => {value:4, done: true}
+generator.next() //{value: undefined, done: true} 제너레이터 실행불가
+```
+
+```js
+function* sumGen() {
+    console.log('sumGen시작');
+    let a = yield;
+    console.log('a값 받음');
+    let b = yield;
+    console.log('b값 받음');
+    return a+b;
+  /* 아래는 무한하게 더해주는 함수
+  	let result = 0;
+  	while true:
+  		result += yield result;
+  */
+}
+const sum = sumGen()
+sum.next() // sumGen시작, {value: undefined, done: false}
+sum.next(2) // a값 받음, {value: undefined, done: false}
+sum.next(5) // b값 받음, {value: 7, done: true}
+```
+
+<hr>
+
+
+
