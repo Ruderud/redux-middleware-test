@@ -30,6 +30,38 @@ export const createPromiseThunk = (type, promiseCreator) => {
   return thunkCreator;
 };
 
+const defaultIdSelector = (param) => param; //기본 idSelector의 값 자체가 초기에 가져온 param이라는 의미
+//idselector는 api요청할때의 id를 어떻게 가져올지 정하는 함수. 이는 나중에 가져올 param에 id말고 기타 다른값이 같이 있을때 골라내는데 필요하다
+export const createPromiseThunkById = (
+  type,
+  promiseCreator,
+  idSelector = defaultIdSelector
+) => {
+  const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+
+  const thunkCreator = (param) => async (dispatch) => {
+    const id = idSelector(param); //기존의 createPrimiseThunk에서 meta값용 id를 추가해준것이 전부
+    dispatch({ type, meta: id });
+    try {
+      const payload = await promiseCreator(param);
+      dispatch({
+        type: SUCCESS,
+        payload,
+        meta: id,
+      });
+    } catch (e) {
+      dispatch({
+        type: ERROR,
+        payload: e,
+        error: true,
+        meta: id,
+      });
+    }
+  };
+
+  return thunkCreator;
+};
+
 //modules/posts의 posts함수의 반복적인 switch문을 더 간결하게 리팩토링하기 위한 유틸함수
 //key는 case별로 return하는 값인 post/posts를 구별해주는 역할을 하는 변수가 될 것
 //여기서 reducer를 만들어서 modules/posts에 가져가서 사용할 것
