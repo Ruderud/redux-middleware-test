@@ -8,16 +8,20 @@ import { createStore, applyMiddleware } from "redux";
 import rootReducer from "./modules";
 import logger from "redux-logger";
 import { composeWithDevTools } from "redux-devtools-extension";
+import ReduxThunk from "redux-thunk";
+import { BrowserRouter } from "react-router-dom";
 
 const store = createStore(
   rootReducer,
-  composeWithDevTools(applyMiddleware(logger))
+  composeWithDevTools(applyMiddleware(ReduxThunk, logger)) //logger가 맨뒤에 있도록 해야한다. 그렇지 않으면 중간의 함수들도 출력해버림
 );
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </BrowserRouter>,
   document.getElementById("root")
 );
 
