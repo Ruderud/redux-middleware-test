@@ -134,3 +134,21 @@ post: {
 ```
 
 이렇게 하면 리스트 항목을 로딩할때, 초기의 빈 post객체에 각 리스트항목의 id를 이름으로하는 data 객체들이 추가되며, 이것이 존재한다면 여기서 data를 가져오게끔 하기때문에 새로 로딩하는 일이 없어진다
+
+
+
+<hr>
+
+Json-server (local test용)
+
+프로젝트 가장 바깥(src 밖)에 data.json 파일을 만들고 DB를 작성한다
+
+이후 
+
+```bash
+$ npx json-server ./data.json --port 4000
+```
+
+이런식으로 json-server "DB위치" "포트지정" 하여 열면 가상 백엔드 서버가 열린다
+
+닫을때는 ctrl+c
