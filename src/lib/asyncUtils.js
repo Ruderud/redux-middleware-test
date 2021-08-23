@@ -1,5 +1,48 @@
 // 이 파일은 POSTS, POST의 유사한 코드반복을 줄이기 위함
 
+import { call, put } from "redux-saga/effects";
+//posts의 saga Promise 생성함수들을 간결하게 리팩토링
+export const createPromiseSaga = (type, promiseCreator) => {
+  const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+  return function* saga(action) {
+    try {
+      const result = yield call(promiseCreator, action.payload);
+      yield put({
+        type: SUCCESS,
+        payload: result,
+      });
+    } catch (e) {
+      yield put({
+        type: ERROR,
+        error: true,
+        payload: e,
+      });
+    }
+  };
+};
+
+export const createPromiseSagaById = (type, promiseCreator) => {
+  const [SUCCESS, ERROR] = [`${type}_SUCCESS`, `${type}_ERROR`];
+  return function* saga(action) {
+    const id = action.meta;
+    try {
+      const result = yield call(promiseCreator, action.payload);
+      yield put({
+        type: SUCCESS,
+        payload: result,
+        meta: id,
+      });
+    } catch (e) {
+      yield put({
+        type: ERROR,
+        error: true,
+        payload: e,
+        meta: id,
+      });
+    }
+  };
+};
+
 //thunk 함수를 이용해서 modules/posts의 Promise 생성함수 getPosts, getPost를 더 간단하게끔 리팩토링
 export const createPromiseThunk = (type, promiseCreator) => {
   // switch의 case 분류에 사용할 문자열을 비구조화 할당을 통해서 생성
